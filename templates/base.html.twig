@@ -13,7 +13,13 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    <body class="bg-white">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible mt-2 mx-5" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
         {% block body %}{% endblock %}
     </body>
 </html>

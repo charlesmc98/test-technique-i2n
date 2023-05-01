@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Brand - Edit{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row p-3 bg-white">
+            <div class="col-12 text-center">
+                <h1 class="text-center my-4">Test Technique I2N</h1>
+            </div>
+			<div class="col-12 text-center">
+				<h3 class="text-center my-4">Edition de la marque {{ brand.name }}</h1>
+			</div>
+            <div class="col-12">
+                {{ form_start(form) }}
+                    {{ form_row(form.name) }}
+
+                    <label>Modèles :</label>
+                    <ul 
+                        class="models px-0 d-flex flex-column justify-content-between" 
+                        data-index="{{ form.models|length > 0 ? form.models|last.vars.name + 1 : 0 }}"
+                        data-prototype="{{ form_widget(form.models.vars.prototype)|e('html_attr') }}"
+                    >
+                        {% for model in form.models %}
+                            <li class="list-unstyled d-flex justify-content-between align-items-center">
+                                {{ form_row(model.name) }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <button type="button" class="btn btn-primary w-100 add_item_link" data-collection-holder-class="models">
+                        Ajouter un modèle
+                    </button>
+                    <button type="submit" class="btn btn-success mt-2">
+                        <i class="fa fa-save" aria-hidden="true"></i> Enregistrer
+                    </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+const addFormToCollection = (e) => {
+    const collectionHolder = document.querySelector(`.${e.currentTarget.dataset.collectionHolderClass}`);
+    const item = document.createElement('li');
+    item.innerHTML = collectionHolder.dataset.prototype.replace(/__name__/g, collectionHolder.dataset.index);
+    item.classList.add('list-unstyled', 'd-flex', 'justify-content-between', 'align-items-center');
+    collectionHolder.appendChild(item);
+    collectionHolder.dataset.index++;
+    addTagFormDeleteLink(item);
+};
+
+const addTagFormDeleteLink = (item) => {
+    const removeFormButton = document.createElement('button');
+    removeFormButton.innerText = 'x';
+    removeFormButton.classList.add('btn', 'btn-danger', 'delete-item');
+    item.append(removeFormButton);
+
+    removeFormButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        item.remove();
+    });
+}
+
+const init = () => {
+    document.querySelectorAll('.add_item_link').forEach(btn => {
+        btn.addEventListener('click', addFormToCollection);
+    });
+
+    document.querySelectorAll('.list-unstyled').forEach((li) => {
+        addTagFormDeleteLink(li);
+    });
+};
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+{% endblock %}
